@@ -5,7 +5,7 @@ import os
 DATA_FILE = "game_data.json"
 
 default_data = {
-    "team_name": "Breaking Bat",
+    "team_name": "Your Team",
     "opponent": "Opponent",
     "home_score": 0,
     "away_score": 0,
@@ -13,19 +13,18 @@ default_data = {
     "half": "Top",
     "outs": 0,
     "female_lineup": [
-        "Veronica Valencia",
-        "Mari Ahern",
-        "Kristie Hermosillo",
-        "Kaitlyn Garza",
-        "Natalie Elias"
+        "Player One",
+        "Player Two",
+        "Player Three",
+        "Player Four",
+        "Player Five"
     ],
     "male_lineup": [
-        "Raymond Fierro",
-        "Benjamin Almendarez",
-        "Christian Downs",
-        "Miguel Rodriguez",
-        "Brandon Diggs",
-        "Aaron Quinn"
+        "Player Six",
+        "Player Seven",
+        "Player Eight",
+        "Player Nine",
+        "Player Ten"
     ],
     "current_female_index": 0,
     "current_male_index": 0,
@@ -96,7 +95,7 @@ def add_out(data):
 data = load_data()
 
 st.set_page_config(
-    page_title="Softball Dugout Live",
+    page_title="Dugout Live",
     page_icon="🥎",
     layout="wide"
 )
@@ -104,7 +103,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #08111f 0%, #111827 50%, #020617 100%);
+    background: linear-gradient(135deg, #003B73 0%, #005A9C 45%, #001F3F 100%);
 }
 
 header {
@@ -128,7 +127,7 @@ header {
 }
 
 .subtitle {
-    color: #cbd5e1;
+    color: #EAF4FF;
     font-size: 18px;
     margin-bottom: 14px;
 }
@@ -141,29 +140,29 @@ header {
 }
 
 .batter-card {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.12);
     border-radius: 20px;
     padding: 18px;
     min-height: 150px;
 }
 
 .now-card {
-    border: 2px solid #84cc16;
-    box-shadow: 0 0 18px rgba(132, 204, 22, 0.22);
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 0 22px rgba(255,255,255,0.22);
 }
 
 .deck-card {
-    border: 2px solid #38bdf8;
-    box-shadow: 0 0 18px rgba(56, 189, 248, 0.18);
+    border: 2px solid #EF3E42;
+    box-shadow: 0 0 20px rgba(239,62,66,0.22);
 }
 
 .hole-card {
-    border: 2px solid #c084fc;
-    box-shadow: 0 0 18px rgba(192, 132, 252, 0.18);
+    border: 2px solid #A7C7E7;
+    box-shadow: 0 0 20px rgba(167,199,231,0.22);
 }
 
 .card-label {
-    color: #cbd5e1;
+    color: #EAF4FF;
     text-transform: uppercase;
     font-size: 13px;
     letter-spacing: 2px;
@@ -186,19 +185,22 @@ header {
 }
 
 .next-batter-wrap button {
-    height: 62px !important;
-    font-size: 22px !important;
+    height: 64px !important;
+    font-size: 23px !important;
     font-weight: 900 !important;
     border-radius: 16px !important;
+    background: #EF3E42 !important;
+    border: 1px solid #EF3E42 !important;
+    color: white !important;
 }
 
 .previous-wrap button {
-    height: 38px !important;
+    height: 40px !important;
     font-size: 13px !important;
     border-radius: 999px !important;
-    background: transparent !important;
-    border: 1px solid rgba(255,255,255,0.25) !important;
-    color: #cbd5e1 !important;
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    color: #EAF4FF !important;
 }
 
 .score-grid {
@@ -210,15 +212,15 @@ header {
 }
 
 .score-card {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
     border-radius: 18px;
     padding: 16px;
     min-height: 115px;
 }
 
 .score-name {
-    color: #cbd5e1;
+    color: #EAF4FF;
     font-size: 16px;
     font-weight: 800;
 }
@@ -246,7 +248,7 @@ header {
 }
 
 div[data-testid="stCheckbox"] label {
-    color: #fecaca !important;
+    color: #FFD6D6 !important;
     font-weight: 900;
 }
 
@@ -265,13 +267,13 @@ div[data-testid="stCheckbox"] label {
 }
 
 .lineup-text {
-    color: #e5e7eb;
+    color: #EAF4FF;
     font-size: 16px;
     line-height: 1.45;
 }
 
 .highlight {
-    background: rgba(34,197,94,0.25);
+    background: rgba(239,62,66,0.28);
     border-radius: 12px;
     padding: 6px 10px;
     color: white;
@@ -281,7 +283,7 @@ div[data-testid="stCheckbox"] label {
 }
 
 .reset-note {
-    color: #fecaca;
+    color: #FFD6D6;
     font-size: 13px;
     font-weight: 800;
     text-align: right;
@@ -315,8 +317,8 @@ current_batter_display = first_name(current_batter)
 on_deck_display = first_name(on_deck)
 in_the_hole_display = first_name(in_the_hole)
 
-st.markdown("<div class='main-title'>🥎 Softball Dugout Live</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='subtitle'>{data['team_name']} dugout control board</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>🥎 Dugout Live</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='subtitle'>{data['team_name']} game board</div>", unsafe_allow_html=True)
 
 batting_html = f"""
 <div class='batter-grid'>
@@ -336,19 +338,11 @@ batting_html = f"""
 """
 st.markdown(batting_html, unsafe_allow_html=True)
 
-bat_prev_col, bat_next_col, bat_empty_col = st.columns([0.8, 2.2, 1])
-
-with bat_prev_col:
-    st.markdown("<div class='previous-wrap'>", unsafe_allow_html=True)
-    if st.button("Undo", use_container_width=True):
-        previous_batter(data)
-        save_data(data)
-        rerun_app()
-    st.markdown("</div>", unsafe_allow_html=True)
+bat_next_col, bat_empty_col, bat_prev_col = st.columns([2.2, 1, 0.8])
 
 with bat_next_col:
     st.markdown("<div class='next-batter-wrap'>", unsafe_allow_html=True)
-    if st.button("NEXT BATTER", type="primary", use_container_width=True):
+    if st.button("NEXT BATTER", use_container_width=True):
         next_batter(data)
         save_data(data)
         rerun_app()
@@ -356,6 +350,14 @@ with bat_next_col:
 
 with bat_empty_col:
     st.empty()
+
+with bat_prev_col:
+    st.markdown("<div class='previous-wrap'>", unsafe_allow_html=True)
+    if st.button("Previous Batter", use_container_width=True):
+        previous_batter(data)
+        save_data(data)
+        rerun_app()
+    st.markdown("</div>", unsafe_allow_html=True)
 
 score_html = f"""
 <div class='score-grid'>
