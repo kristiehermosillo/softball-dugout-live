@@ -4,6 +4,7 @@ import os
 
 DATA_FILE = "game_data.json"
 
+# Default game data
 default_data = {
     "team_name": "Breaking Bat",
     "opponent": "Opponent",
@@ -34,33 +35,65 @@ default_data = {
 
 def load_data():
     if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r") as file:
-            return json.load(file)
+        with open(DATA_FILE, "r") as f:
+            return json.load(f)
     return default_data
 
 def save_data(data):
-    with open(DATA_FILE, "w") as file:
-        json.dump(data, file, indent=4)
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
 
+def rerun():
+    st.experimental_rerun()
+
+data = load_data()
+
+st.set_page_config(page_title="Softball Dugout Live", page_icon="🥎", layout="wide")
+
+# Custom CSS for a sleek dashboard look
+st.markdown("""
+<style>
+.stApp { background: linear-gradient(135deg, #08111f 0%, #111827 45%, #020617 100%); }
+.block-container { max-width: 1200px; padding-top: 1rem; }
+
+.title { font-size: 64px; font-weight: 900; color: white; margin-bottom: 0px; }
+.subtitle { font-size: 20px; color: #cbd5e1; margin-bottom: 1rem; }
+
+.card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 25px; margin-bottom: 15px; text-align: center; }
+
+.now-batting { font-size: 72px; font-weight: 900; color: white; margin: 15px 0; }
+.on-deck { font-size: 40px; font-weight: 800; color: #bfdbfe; margin: 10px 0; }
+
+.metric-card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 20px; text-align: center; }
+.metric-number { font-size: 60px; font-weight: 900; color: white; }
+.metric-label { color: #cbd5e1; font-size: 18px; }
+
+.button-wide > button { height: 50px; font-size: 16px; font-weight: 800; border-radius: 12px; }
+.lineup-title { font-size: 24px; font-weight: 800; color: #cbd5e1; margin-top: 20px; margin-bottom: 10px; }
+.lineup-item { font-size: 18px; color: #e5e7eb; padding: 2px; }
+.highlight { background: rgba(34,197,94,0.22); border-radius: 12px; padding: 5px 10px; font-weight: 800; }
+</style>
+""", unsafe_allow_html=True)
+
+# Functions to get current, on-deck, and in-the-hole
 def get_batters(data):
+    f_idx = data["current_female_index"]
+    m_idx = data["current_male_index"]
+    next_gender = data["next_gender"]
     female_lineup = data["female_lineup"]
     male_lineup = data["male_lineup"]
-    female_idx = data["current_female_index"]
-    male_idx = data["current_male_index"]
-    next_gender = data["next_gender"]
 
     if next_gender == "Female":
-        current_batter = female_lineup[female_idx]
-        on_deck = male_lineup[male_idx]
-        in_the_hole = female_lineup[(female_idx + 1) % len(female_lineup)]
+        current = female_lineup[f_idx]
+        on_deck = male_lineup[m_idx]
+        in_hole = female_lineup[(f_idx + 1) % len(female_lineup)]
     else:
-        current_batter = male_lineup[male_idx]
-        on_deck = female_lineup[female_idx]
-        in_the_hole = male_lineup[(male_idx + 1) % len(male_lineup)]
+        current = male_lineup[m_idx]
+        on_deck = female_lineup[f_idx]
+        in_hole = male_lineup[(m_idx + 1) % len(male_lineup)]
+    return current, on_deck, in_hole
 
-    return current_batter, on_deck, in_the_hole
-
-def next_batter(data):
+def advance_batter(data):
     if data["next_gender"] == "Female":
         data["current_female_index"] = (data["current_female_index"] + 1) % len(data["female_lineup"])
         data["next_gender"] = "Male"
@@ -70,249 +103,58 @@ def next_batter(data):
 
 def add_out(data):
     data["outs"] += 1
-
     if data["outs"] >= 3:
         data["outs"] = 0
-
+        data["half"] = "Bottom" if data["half"] == "Top" else "Top"
         if data["half"] == "Top":
-            data["half"] = "Bottom"
-        else:
-            data["half"] = "Top"
             data["inning"] += 1
 
-def rerun_app():
-    st.rerun()
+current, on_deck, in_hole = get_batters(data)
 
-data = load_data()
-
-st.set_page_config(
-    page_title="Softball Dugout Live",
-    page_icon="🥎",
-    layout="wide"
-)
-
-st.markdown("""
-<style>
-.stApp {
-    background: linear-gradient(135deg, #08111f 0%, #111827 45%, #020617 100%);
-}
-
-.block-container {
-    padding-top: 1.5rem;
-    max-width: 1150px;
-}
-
-.main-title {
-    font-size: 68px;
-    font-weight: 900;
-    color: white;
-    line-height: 1;
-    margin-bottom: 12px;
-}
-
-.subtitle {
-    color: #cbd5e1;
-    font-size: 22px;
-    margin-bottom: 30px;
-}
-
-.card {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    padding: 28px;
-    margin-bottom: 22px;
-}
-
-.batter-card {
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 28px;
-    padding: 34px;
-    margin-bottom: 26px;
-    text-align: center;
-}
-
-.small-label {
-    color: #94a3b8;
-    text-transform: uppercase;
-    font-size: 14px;
-    letter-spacing: 2px;
-    font-weight: 800;
-}
-
-.now-batting {
-    font-size: 72px;
-    font-weight: 900;
-    color: white;
-    line-height: 1.05;
-    margin-bottom: 28px;
-}
-
-.on-deck {
-    font-size: 40px;
-    color: #bfdbfe;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 24px;
-}
-
-.score-name {
-    color: #cbd5e1;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.score-number {
-    font-size: 64px;
-    font-weight: 900;
-    color: white;
-    line-height: 1;
-    margin-top: 12px;
-}
-
-.game-info {
-    color: white;
-    font-size: 40px;
-    font-weight: 900;
-    line-height: 1.2;
-}
-
-.lineup-text {
-    color: #e5e7eb;
-    font-size: 20px;
-    line-height: 1.8;
-}
-
-.highlight {
-    background: rgba(34,197,94,0.22);
-    border-radius: 14px;
-    padding: 10px 14px;
-    color: white;
-    font-weight: 900;
-    font-size: 20px;
-    margin: 4px 0;
-}
-
-h3, h4 {
-    color: white !important;
-}
-
-.stButton > button {
-    border-radius: 12px;
-    height: 48px;
-    font-weight: 800;
-    font-size: 16px;
-}
-</style>
-""", unsafe_allow_html=True)
-
-current_batter, on_deck, in_the_hole = get_batters(data)
-
-st.markdown("<div class='main-title'>🥎 Softball Dugout Live</div>", unsafe_allow_html=True)
+# Header
+st.markdown(f"<div class='title'>🥎 Softball Dugout Live</div>", unsafe_allow_html=True)
 st.markdown(f"<div class='subtitle'>{data['team_name']} dugout control board</div>", unsafe_allow_html=True)
 
-st.markdown("### NOW BATTING")
-st.markdown(
-    f"<h1 style='text-align:center;'>{current_batter}</h1>",
-    unsafe_allow_html=True
-)
+# Batting section with clear separation
+bat_col1, bat_col2 = st.columns([2,2])
+with bat_col1:
+    st.markdown(f"<div class='card'><div class='now-batting'>NOW BATTING<br>{current}</div></div>", unsafe_allow_html=True)
+with bat_col2:
+    st.markdown(f"<div class='card'><div class='on-deck'>ON DECK<br>{on_deck}</div></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='card'><div class='on-deck'>IN THE HOLE<br>{in_hole}</div></div>", unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("### ON DECK")
-    st.markdown(
-        f"<h2 style='text-align:center;'>{on_deck}</h2>",
-        unsafe_allow_html=True
-    )
-
-with col2:
-    st.markdown("### IN THE HOLE")
-    st.markdown(
-        f"<h2 style='text-align:center;'>{in_the_hole}</h2>",
-        unsafe_allow_html=True
-    )
-
+# Scoreboard
 score_col1, score_col2, info_col = st.columns(3)
-
 with score_col1:
-    st.markdown(
-        f"""
-        <div class='card'>
-            <div class='score-name'>{data['team_name']}</div>
-            <div class='score-number'>{data['home_score']}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    if st.button("+ Run for Us", use_container_width=True):
-        data["home_score"] += 1
-        save_data(data)
-        rerun_app()
-
+    st.markdown(f"<div class='metric-card'><div class='metric-label'>{data['team_name']}</div><div class='metric-number'>{data['home_score']}</div></div>", unsafe_allow_html=True)
+    if st.button("+ Run for Us", key="run_us", use_container_width=True):
+        data["home_score"] += 1; save_data(data); rerun()
 with score_col2:
-    st.markdown(
-        f"""
-        <div class='card'>
-            <div class='score-name'>{data['opponent']}</div>
-            <div class='score-number'>{data['away_score']}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    if st.button("+ Run for Opponent", use_container_width=True):
-        data["away_score"] += 1
-        save_data(data)
-        rerun_app()
-
+    st.markdown(f"<div class='metric-card'><div class='metric-label'>{data['opponent']}</div><div class='metric-number'>{data['away_score']}</div></div>", unsafe_allow_html=True)
+    if st.button("+ Run for Opponent", key="run_opp", use_container_width=True):
+        data["away_score"] += 1; save_data(data); rerun()
 with info_col:
-    st.markdown(
-        f"""
-        <div class='card'>
-            <div class='small-label'>GAME INFO</div>
-            <div class='game-info'>{data['half']} {data['inning']}</div>
-            <div class='game-info'>Outs: {data['outs']}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown(f"<div class='metric-card'><div class='metric-label'>GAME INFO</div><div class='metric-number'>{data['half']} {data['inning']}<br>Outs: {data['outs']}</div></div>", unsafe_allow_html=True)
 
-button_col1, button_col2, button_col3 = st.columns(3)
+# Action buttons
+btn_col1, btn_col2, btn_col3 = st.columns(3)
+with btn_col1:
+    if st.button("➡ Next Batter", key="next", use_container_width=True):
+        advance_batter(data); save_data(data); rerun()
+with btn_col2:
+    if st.button("+ Out", key="out", use_container_width=True):
+        add_out(data); save_data(data); rerun()
+with btn_col3:
+    if st.button("Reset Game", key="reset", use_container_width=True):
+        save_data(default_data); rerun()
 
-with button_col1:
-    if st.button("➡ Next Batter", use_container_width=True):
-        next_batter(data)
-        save_data(data)
-        rerun_app()
+# Lineups
+st.markdown("<div class='lineup-title'>Female Lineup</div>", unsafe_allow_html=True)
+for i, p in enumerate(data["female_lineup"]):
+    highlight = "highlight" if i == data["current_female_index"] and data["next_gender"] == "Female" else ""
+    st.markdown(f"<div class='lineup-item {highlight}'>{i+1}. {p}</div>", unsafe_allow_html=True)
 
-with button_col2:
-    if st.button("+ Out", use_container_width=True):
-        add_out(data)
-        save_data(data)
-        rerun_app()
-
-with button_col3:
-    if st.button("Reset Game", use_container_width=True):
-        save_data(default_data)
-        rerun_app()
-
-st.markdown("### Lineup")
-
-lineup_col1, lineup_col2 = st.columns(2)
-
-with lineup_col1:
-    st.markdown("#### Female Lineup")
-    for i, player in enumerate(data["female_lineup"]):
-        if i == data["current_female_index"] and data["next_gender"] == "Female":
-            st.markdown(f"<div class='highlight'>🥎 {i + 1}. {player}</div>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<div class='lineup-text'>{i + 1}. {player}</div>", unsafe_allow_html=True)
-
-with lineup_col2:
-    st.markdown("#### Male Lineup")
-    for i, player in enumerate(data["male_lineup"]):
-        if i == data["current_male_index"] and data["next_gender"] == "Male":
-            st.markdown(f"<div class='highlight'>🥎 {i + 1}. {player}</div>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<div class='lineup-text'>{i + 1}. {player}</div>", unsafe_allow_html=True)
+st.markdown("<div class='lineup-title'>Male Lineup</div>", unsafe_allow_html=True)
+for i, p in enumerate(data["male_lineup"]):
+    highlight = "highlight" if i == data["current_male_index"] and data["next_gender"] == "Male" else ""
+    st.markdown(f"<div class='lineup-item {highlight}'>{i+1}. {p}</div>", unsafe_allow_html=True)
