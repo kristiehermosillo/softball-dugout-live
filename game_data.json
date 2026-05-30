@@ -1,23 +1,27 @@
 {
   "team_name": "Breaking Bat",
-  "opponent": "Unknown",
+  "opponent": "Opponent",
   "home_score": 0,
   "away_score": 0,
   "inning": 1,
   "half": "Top",
   "outs": 0,
-  "current_batter_index": 0,
-  "lineup": [
+  "female_lineup": [
     "Veronica Valencia",
     "Mari Ahern",
     "Kristie Hermosillo",
     "Kaitlyn Garza",
-    "Natalie Elias",
+    "Natalie Elias"
+  ],
+  "male_lineup": [
     "Raymond Fierro",
     "Benjamin Almendarez",
     "Christian Downs",
     "Miguel Rodriguez",
     "Brandon Diggs",
     "Aaron Quinn"
-  ]
+  ],
+  "current_female_index": 0,
+  "current_male_index": 0,
+  "next_gender": "Female"
 }
