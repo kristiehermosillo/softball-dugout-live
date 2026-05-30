@@ -46,21 +46,21 @@ def rerun_app():
     st.rerun()
 
 def get_batters(data):
-    female_lineup = data["female_lineup"]
-    male_lineup = data["male_lineup"]
-    female_idx = data["current_female_index"]
-    male_idx = data["current_male_index"]
+    f = data["current_female_index"]
+    m = data["current_male_index"]
 
     if data["next_gender"] == "Female":
-        current = female_lineup[female_idx]
-        on_deck = male_lineup[male_idx]
-        in_the_hole = female_lineup[(female_idx + 1) % len(female_lineup)]
+        return (
+            data["female_lineup"][f],
+            data["male_lineup"][m],
+            data["female_lineup"][(f + 1) % len(data["female_lineup"])]
+        )
     else:
-        current = male_lineup[male_idx]
-        on_deck = female_lineup[female_idx]
-        in_the_hole = male_lineup[(male_idx + 1) % len(male_lineup)]
-
-    return current, on_deck, in_the_hole
+        return (
+            data["male_lineup"][m],
+            data["female_lineup"][f],
+            data["male_lineup"][(m + 1) % len(data["male_lineup"])]
+        )
 
 def next_batter(data):
     if data["next_gender"] == "Female":
@@ -80,10 +80,8 @@ def previous_batter(data):
 
 def add_out(data):
     data["outs"] += 1
-
     if data["outs"] >= 3:
         data["outs"] = 0
-
         if data["half"] == "Top":
             data["half"] = "Bottom"
         else:
@@ -105,104 +103,97 @@ st.markdown("""
 }
 
 .block-container {
-    padding-top: 0.75rem;
-    padding-bottom: 1rem;
-    max-width: 1180px;
+    padding-top: 0.2rem;
+    padding-bottom: 0.5rem;
+    max-width: 1050px;
 }
 
 .main-title {
-    font-size: clamp(34px, 5vw, 56px);
+    font-size: clamp(30px, 4vw, 48px);
     font-weight: 900;
     color: white;
-    line-height: 1.05;
+    line-height: 1;
     margin-bottom: 6px;
 }
 
 .subtitle {
     color: #cbd5e1;
-    font-size: clamp(16px, 2vw, 20px);
-    margin-bottom: 16px;
+    font-size: 18px;
+    margin-bottom: 14px;
 }
 
 .batter-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 16px;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 
 .batter-card {
     background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 22px;
+    border-radius: 20px;
     padding: 18px;
-    min-height: 150px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    min-height: 145px;
 }
 
 .now-card {
-    border: 2px solid rgba(132,204,22,0.85);
-    box-shadow: 0 0 22px rgba(132,204,22,0.18);
+    border: 2px solid #84cc16;
 }
 
 .deck-card {
-    border: 2px solid rgba(59,130,246,0.75);
-    box-shadow: 0 0 22px rgba(59,130,246,0.14);
+    border: 2px solid #38bdf8;
 }
 
 .hole-card {
-    border: 2px solid rgba(168,85,247,0.75);
-    box-shadow: 0 0 22px rgba(168,85,247,0.14);
+    border: 2px solid #c084fc;
 }
 
 .card-label {
     color: #cbd5e1;
     text-transform: uppercase;
-    font-size: 15px;
+    font-size: 14px;
     letter-spacing: 2px;
     font-weight: 900;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .now-name {
     color: white;
-    font-size: clamp(36px, 5.2vw, 64px);
+    font-size: clamp(34px, 4.8vw, 58px);
     font-weight: 900;
-    line-height: 1.02;
+    line-height: 1.05;
 }
 
 .secondary-name {
     color: white;
-    font-size: clamp(26px, 3.6vw, 42px);
+    font-size: clamp(25px, 3.2vw, 38px);
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1.08;
 }
 
 .score-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1.25fr;
-    gap: 14px;
+    gap: 12px;
     margin-bottom: 12px;
 }
 
 .score-card {
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 20px;
-    padding: 18px;
+    border-radius: 18px;
+    padding: 16px;
 }
 
 .score-name {
     color: #cbd5e1;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 800;
 }
 
 .score-number {
     color: white;
-    font-size: clamp(42px, 5vw, 58px);
+    font-size: 48px;
     font-weight: 900;
     line-height: 1;
     margin-top: 8px;
@@ -210,41 +201,36 @@ st.markdown("""
 
 .game-info {
     color: white;
-    font-size: clamp(30px, 4vw, 44px);
+    font-size: 34px;
     font-weight: 900;
     line-height: 1.15;
 }
 
-.button-row {
-    margin-bottom: 12px;
-}
-
 .stButton > button {
     border-radius: 12px;
-    height: 46px;
+    height: 44px;
     font-weight: 900;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .lineup-title {
     color: white;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
-    margin-top: 10px;
-    margin-bottom: 8px;
+    margin-top: 12px;
 }
 
 .lineup-subtitle {
     color: white;
-    font-size: 21px;
+    font-size: 20px;
     font-weight: 900;
     margin-bottom: 8px;
 }
 
 .lineup-text {
     color: #e5e7eb;
-    font-size: 18px;
-    line-height: 1.55;
+    font-size: 17px;
+    line-height: 1.5;
 }
 
 .highlight {
@@ -253,7 +239,7 @@ st.markdown("""
     padding: 7px 10px;
     color: white;
     font-weight: 900;
-    font-size: 18px;
+    font-size: 17px;
     margin: 3px 0;
 }
 
@@ -267,7 +253,7 @@ st.markdown("""
     }
 
     .batter-card {
-        min-height: 110px;
+        min-height: 105px;
     }
 }
 </style>
@@ -278,50 +264,42 @@ current_batter, on_deck, in_the_hole = get_batters(data)
 st.markdown("<div class='main-title'>🥎 Softball Dugout Live</div>", unsafe_allow_html=True)
 st.markdown(f"<div class='subtitle'>{data['team_name']} dugout control board</div>", unsafe_allow_html=True)
 
-st.markdown(
-    f"""
-    <div class='batter-grid'>
-        <div class='batter-card now-card'>
-            <div class='card-label'>Now Batting</div>
-            <div class='now-name'>{current_batter}</div>
-        </div>
+batting_html = f"""
+<div class='batter-grid'>
+<div class='batter-card now-card'>
+<div class='card-label'>Now Batting</div>
+<div class='now-name'>{current_batter}</div>
+</div>
+<div class='batter-card deck-card'>
+<div class='card-label'>On Deck</div>
+<div class='secondary-name'>{on_deck}</div>
+</div>
+<div class='batter-card hole-card'>
+<div class='card-label'>In The Hole</div>
+<div class='secondary-name'>{in_the_hole}</div>
+</div>
+</div>
+"""
+st.markdown(batting_html, unsafe_allow_html=True)
 
-        <div class='batter-card deck-card'>
-            <div class='card-label'>On Deck</div>
-            <div class='secondary-name'>{on_deck}</div>
-        </div>
-
-        <div class='batter-card hole-card'>
-            <div class='card-label'>In The Hole</div>
-            <div class='secondary-name'>{in_the_hole}</div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    f"""
-    <div class='score-grid'>
-        <div class='score-card'>
-            <div class='score-name'>{data['team_name']}</div>
-            <div class='score-number'>{data['home_score']}</div>
-        </div>
-
-        <div class='score-card'>
-            <div class='score-name'>{data['opponent']}</div>
-            <div class='score-number'>{data['away_score']}</div>
-        </div>
-
-        <div class='score-card'>
-            <div class='card-label'>Game Info</div>
-            <div class='game-info'>{data['half']} {data['inning']}</div>
-            <div class='game-info'>Outs: {data['outs']}</div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+score_html = f"""
+<div class='score-grid'>
+<div class='score-card'>
+<div class='score-name'>{data['team_name']}</div>
+<div class='score-number'>{data['home_score']}</div>
+</div>
+<div class='score-card'>
+<div class='score-name'>{data['opponent']}</div>
+<div class='score-number'>{data['away_score']}</div>
+</div>
+<div class='score-card'>
+<div class='card-label'>Game Info</div>
+<div class='game-info'>{data['half']} {data['inning']}</div>
+<div class='game-info'>Outs: {data['outs']}</div>
+</div>
+</div>
+"""
+st.markdown(score_html, unsafe_allow_html=True)
 
 button_col1, button_col2, button_col3, button_col4, button_col5 = st.columns(5)
 
@@ -355,9 +333,9 @@ with button_col5:
         save_data(data)
         rerun_app()
 
-reset_col1, reset_col2, reset_col3 = st.columns([1, 1, 1])
+reset_left, reset_center, reset_right = st.columns([1, 1, 1])
 
-with reset_col2:
+with reset_center:
     if st.button("Reset Game", use_container_width=True):
         save_data(default_data)
         rerun_app()
