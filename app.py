@@ -45,6 +45,9 @@ def save_data(data):
 def rerun_app():
     st.rerun()
 
+def first_name(name):
+    return name.split()[0]
+
 def get_batters(data):
     f = data["current_female_index"]
     m = data["current_male_index"]
@@ -170,16 +173,32 @@ header {
 
 .now-name {
     color: white;
-    font-size: clamp(36px, 5vw, 64px);
+    font-size: clamp(48px, 6vw, 78px);
     font-weight: 900;
     line-height: 1.03;
 }
 
 .secondary-name {
     color: white;
-    font-size: clamp(28px, 3.5vw, 44px);
+    font-size: clamp(34px, 4vw, 54px);
     font-weight: 900;
     line-height: 1.05;
+}
+
+.next-batter-wrap button {
+    height: 62px !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    border-radius: 16px !important;
+}
+
+.previous-wrap button {
+    height: 38px !important;
+    font-size: 13px !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.25) !important;
+    color: #cbd5e1 !important;
 }
 
 .score-grid {
@@ -292,6 +311,10 @@ div[data-testid="stCheckbox"] label {
 
 current_batter, on_deck, in_the_hole = get_batters(data)
 
+current_batter_display = first_name(current_batter)
+on_deck_display = first_name(on_deck)
+in_the_hole_display = first_name(in_the_hole)
+
 st.markdown("<div class='main-title'>🥎 Softball Dugout Live</div>", unsafe_allow_html=True)
 st.markdown(f"<div class='subtitle'>{data['team_name']} dugout control board</div>", unsafe_allow_html=True)
 
@@ -299,35 +322,39 @@ batting_html = f"""
 <div class='batter-grid'>
 <div class='batter-card now-card'>
 <div class='card-label'>Now Batting</div>
-<div class='now-name'>{current_batter}</div>
+<div class='now-name'>{current_batter_display}</div>
 </div>
 <div class='batter-card deck-card'>
 <div class='card-label'>On Deck</div>
-<div class='secondary-name'>{on_deck}</div>
+<div class='secondary-name'>{on_deck_display}</div>
 </div>
 <div class='batter-card hole-card'>
 <div class='card-label'>In The Hole</div>
-<div class='secondary-name'>{in_the_hole}</div>
+<div class='secondary-name'>{in_the_hole_display}</div>
 </div>
 </div>
 """
 st.markdown(batting_html, unsafe_allow_html=True)
 
-bat_button_col1, bat_button_col2, bat_button_col3 = st.columns([1.4, 1, 1])
+bat_prev_col, bat_next_col, bat_empty_col = st.columns([0.8, 2.2, 1])
 
-with bat_button_col1:
-    if st.button("Previous Batter", use_container_width=True):
+with bat_prev_col:
+    st.markdown("<div class='previous-wrap'>", unsafe_allow_html=True)
+    if st.button("Undo", use_container_width=True):
         previous_batter(data)
         save_data(data)
         rerun_app()
+    st.markdown("</div>", unsafe_allow_html=True)
 
-with bat_button_col2:
-    if st.button("Next Batter", use_container_width=True):
+with bat_next_col:
+    st.markdown("<div class='next-batter-wrap'>", unsafe_allow_html=True)
+    if st.button("NEXT BATTER", type="primary", use_container_width=True):
         next_batter(data)
         save_data(data)
         rerun_app()
+    st.markdown("</div>", unsafe_allow_html=True)
 
-with bat_button_col3:
+with bat_empty_col:
     st.empty()
 
 score_html = f"""
