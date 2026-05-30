@@ -102,18 +102,24 @@ st.markdown("""
     background: linear-gradient(135deg, #08111f 0%, #111827 50%, #020617 100%);
 }
 
+header {
+    height: 0px;
+}
+
 .block-container {
-    padding-top: 0.2rem;
+    padding-top: 2.4rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     padding-bottom: 0.5rem;
-    max-width: 1050px;
+    max-width: 1350px;
 }
 
 .main-title {
-    font-size: clamp(30px, 4vw, 48px);
+    font-size: clamp(34px, 4.2vw, 58px);
     font-weight: 900;
     color: white;
-    line-height: 1;
-    margin-bottom: 6px;
+    line-height: 1.05;
+    margin-bottom: 4px;
 }
 
 .subtitle {
@@ -124,8 +130,8 @@ st.markdown("""
 
 .batter-grid {
     display: grid;
-    grid-template-columns: 1.35fr 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 14px;
     margin-bottom: 14px;
 }
 
@@ -133,7 +139,7 @@ st.markdown("""
     background: rgba(255,255,255,0.08);
     border-radius: 20px;
     padding: 18px;
-    min-height: 145px;
+    min-height: 150px;
 }
 
 .now-card {
@@ -151,31 +157,31 @@ st.markdown("""
 .card-label {
     color: #cbd5e1;
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 2px;
     font-weight: 900;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .now-name {
     color: white;
-    font-size: clamp(34px, 4.8vw, 58px);
+    font-size: clamp(36px, 5vw, 64px);
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1.03;
 }
 
 .secondary-name {
     color: white;
-    font-size: clamp(25px, 3.2vw, 38px);
+    font-size: clamp(28px, 3.5vw, 44px);
     font-weight: 900;
-    line-height: 1.08;
+    line-height: 1.05;
 }
 
 .score-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1.25fr;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 14px;
+    margin-bottom: 8px;
 }
 
 .score-card {
@@ -183,6 +189,7 @@ st.markdown("""
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 18px;
     padding: 16px;
+    min-height: 115px;
 }
 
 .score-name {
@@ -193,7 +200,7 @@ st.markdown("""
 
 .score-number {
     color: white;
-    font-size: 48px;
+    font-size: 50px;
     font-weight: 900;
     line-height: 1;
     margin-top: 8px;
@@ -208,7 +215,7 @@ st.markdown("""
 
 .stButton > button {
     border-radius: 12px;
-    height: 44px;
+    height: 42px;
     font-weight: 900;
     font-size: 14px;
 }
@@ -229,21 +236,27 @@ st.markdown("""
 
 .lineup-text {
     color: #e5e7eb;
-    font-size: 17px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.45;
 }
 
 .highlight {
     background: rgba(34,197,94,0.25);
     border-radius: 12px;
-    padding: 7px 10px;
+    padding: 6px 10px;
     color: white;
     font-weight: 900;
-    font-size: 17px;
+    font-size: 16px;
     margin: 3px 0;
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 900px) {
+    .block-container {
+        padding-top: 2.2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
     .batter-grid {
         grid-template-columns: 1fr;
     }
@@ -253,7 +266,7 @@ st.markdown("""
     }
 
     .batter-card {
-        min-height: 105px;
+        min-height: 110px;
     }
 }
 </style>
@@ -301,41 +314,41 @@ score_html = f"""
 """
 st.markdown(score_html, unsafe_allow_html=True)
 
-button_col1, button_col2, button_col3, button_col4, button_col5 = st.columns(5)
+score_button_col1, score_button_col2, score_button_col3 = st.columns([1, 1, 1.25])
 
-with button_col1:
+with score_button_col1:
     if st.button("+ Run Us", use_container_width=True):
         data["home_score"] += 1
         save_data(data)
         rerun_app()
 
-with button_col2:
+with score_button_col2:
     if st.button("+ Run Opp", use_container_width=True):
         data["away_score"] += 1
         save_data(data)
         rerun_app()
 
-with button_col3:
-    if st.button("Previous Batter", use_container_width=True):
-        previous_batter(data)
-        save_data(data)
-        rerun_app()
-
-with button_col4:
-    if st.button("Next Batter", use_container_width=True):
-        next_batter(data)
-        save_data(data)
-        rerun_app()
-
-with button_col5:
+with score_button_col3:
     if st.button("+ Out", use_container_width=True):
         add_out(data)
         save_data(data)
         rerun_app()
 
-reset_left, reset_center, reset_right = st.columns([1, 1, 1])
+nav_button_col1, nav_button_col2, nav_button_col3 = st.columns([1, 1, 1.25])
 
-with reset_center:
+with nav_button_col1:
+    if st.button("Previous Batter", use_container_width=True):
+        previous_batter(data)
+        save_data(data)
+        rerun_app()
+
+with nav_button_col2:
+    if st.button("Next Batter", use_container_width=True):
+        next_batter(data)
+        save_data(data)
+        rerun_app()
+
+with nav_button_col3:
     if st.button("Reset Game", use_container_width=True):
         save_data(default_data)
         rerun_app()
