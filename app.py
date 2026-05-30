@@ -212,21 +212,27 @@ current_batter, on_deck, in_the_hole = get_batters(data)
 st.markdown("<div class='main-title'>🥎 Softball Dugout Live</div>", unsafe_allow_html=True)
 st.markdown(f"<div class='subtitle'>{data['team_name']} dugout control board</div>", unsafe_allow_html=True)
 
+st.markdown("### NOW BATTING")
 st.markdown(
-    f"""
-    <div class='batter-card'>
-        <div class='small-label'>NOW BATTING</div>
-        <div class='now-batting'>{current_batter}</div>
-
-        <div class='small-label'>ON DECK</div>
-        <div class='on-deck'>{on_deck}</div>
-
-        <div class='small-label'>IN THE HOLE</div>
-        <div class='on-deck'>{in_the_hole}</div>
-    </div>
-    """,
+    f"<h1 style='text-align:center;'>{current_batter}</h1>",
     unsafe_allow_html=True
 )
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### ON DECK")
+    st.markdown(
+        f"<h2 style='text-align:center;'>{on_deck}</h2>",
+        unsafe_allow_html=True
+    )
+
+with col2:
+    st.markdown("### IN THE HOLE")
+    st.markdown(
+        f"<h2 style='text-align:center;'>{in_the_hole}</h2>",
+        unsafe_allow_html=True
+    )
 
 score_col1, score_col2, info_col = st.columns(3)
 
