@@ -12,20 +12,24 @@ default_data = {
     "inning": 1,
     "half": "Top",
     "outs": 0,
-    "current_batter_index": 0,
-    "lineup": [
+    "female_lineup": [
         "Veronica Valencia",
         "Mari Ahern",
         "Kristie Hermosillo",
         "Kaitlyn Garza",
-        "Natalie Elias",
+        "Natalie Elias"
+    ],
+    "male_lineup": [
         "Raymond Fierro",
         "Benjamin Almendarez",
         "Christian Downs",
         "Miguel Rodriguez",
         "Brandon Diggs",
         "Aaron Quinn"
-    ]
+    ],
+    "current_female_index": 0,
+    "current_male_index": 0,
+    "next_gender": "Female"  # start with Female
 }
 
 def load_data():
@@ -52,17 +56,25 @@ page = st.sidebar.radio(
     ["Dugout View", "Scorekeeper"]
 )
 
-lineup = data["lineup"]
-current_index = data["current_batter_index"]
+# Determine current batter and on-deck
+female_lineup = data["female_lineup"]
+male_lineup = data["male_lineup"]
+female_idx = data["current_female_index"]
+male_idx = data["current_male_index"]
+next_gender = data["next_gender"]
 
-current_batter = lineup[current_index]
+if next_gender == "Female":
+    current_batter = female_lineup[female_idx]
+    next_gender_for_deck = "Male"
+    on_deck_idx = male_idx
+    on_deck = male_lineup[on_deck_idx] if male_lineup else None
+else:
+    current_batter = male_lineup[male_idx]
+    next_gender_for_deck = "Female"
+    on_deck_idx = female_idx
+    on_deck = female_lineup[on_deck_idx] if female_lineup else None
 
-next_index = current_index + 1
-if next_index >= len(lineup):
-    next_index = 0
-
-on_deck = lineup[next_index]
-
+# Dugout View
 if page == "Dugout View":
     st.header(data["team_name"])
 
@@ -76,60 +88,70 @@ if page == "Dugout View":
     st.write(f"Outs: {data['outs']}")
 
     st.subheader("Now Batting")
-    st.success(current_batter)
+    st.success(f"{current_batter} ({next_gender})")
 
     st.subheader("On Deck")
-    st.info(on_deck)
+    if on_deck:
+        st.info(f"{on_deck} ({next_gender_for_deck})")
+    else:
+        st.info("None")
 
     st.subheader("Lineup")
-    for number, player in enumerate(lineup, start=1):
-        if number == current_index + 1:
-            st.write(f"🥎 {number}. {player}")
-        else:
-            st.write(f"{number}. {player}")
+    st.write("Female Lineup:")
+    for i, player in enumerate(female_lineup, start=1):
+        prefix = "🥎" if i-1 == female_idx and next_gender=="Female" else ""
+        st.write(f"{prefix}{i}. {player}")
+    st.write("Male Lineup:")
+    for i, player in enumerate(male_lineup, start=1):
+        prefix = "🥎" if i-1 == male_idx and next_gender=="Male" else ""
+        st.write(f"{prefix}{i}. {player}")
 
+# Scorekeeper View
 if page == "Scorekeeper":
     st.header("Scorekeeper Controls")
 
     st.subheader("Score")
     col1, col2 = st.columns(2)
-
     if col1.button("Add Run for Us"):
-        data["home_score"] = data["home_score"] + 1
+        data["home_score"] += 1
         save_data(data)
-        st.rerun()
-
+        st.experimental_rerun()
     if col2.button("Add Run for Opponent"):
-        data["away_score"] = data["away_score"] + 1
+        data["away_score"] += 1
         save_data(data)
-        st.rerun()
+        st.experimental_rerun()
 
     st.subheader("Batting")
-    st.write(f"Current batter: {current_batter}")
-    st.write(f"On deck: {on_deck}")
+    st.write(f"Current batter: {current_batter} ({next_gender})")
+    st.write(f"On deck: {on_deck} ({next_gender_for_deck})")
 
     if st.button("Next Batter"):
-        data["current_batter_index"] = next_index
+        # Advance the proper index and switch gender
+        if next_gender == "Female":
+            data["current_female_index"] = (female_idx + 1) % len(female_lineup)
+            data["next_gender"] = "Male"
+        else:
+            data["current_male_index"] = (male_idx + 1) % len(male_lineup)
+            data["next_gender"] = "Female"
         save_data(data)
-        st.rerun()
+        st.experimental_rerun()
 
     st.subheader("Outs")
     st.write(f"Current outs: {data['outs']}")
-
     if st.button("Add Out"):
-        data["outs"] = data["outs"] + 1
+        data["outs"] += 1
         if data["outs"] >= 3:
             data["outs"] = 0
             if data["half"] == "Top":
                 data["half"] = "Bottom"
             else:
                 data["half"] = "Top"
-                data["inning"] = data["inning"] + 1
+                data["inning"] += 1
         save_data(data)
-        st.rerun()
+        st.experimental_rerun()
 
     st.subheader("Reset")
     if st.button("Reset Game"):
         data = default_data
         save_data(data)
-        st.rerun()
+        st.experimental_rerun()
