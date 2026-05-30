@@ -45,7 +45,18 @@ def rerun_app():
     st.rerun()
 
 def first_name(name):
-    return name.split()[0]
+    return name.split()[0] if name.split() else name
+
+def clean_lineup(text):
+    players = []
+    for line in text.splitlines():
+        cleaned = line.strip()
+        if cleaned:
+            players.append(cleaned)
+    return players
+
+def lineup_to_text(lineup):
+    return "\n".join(lineup)
 
 def get_batters(data):
     f = data["current_female_index"]
@@ -130,6 +141,12 @@ header {
     color: #EAF4FF;
     font-size: 18px;
     margin-bottom: 14px;
+}
+
+div[data-testid="stExpander"] {
+    background: rgba(255,255,255,0.10);
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.22);
 }
 
 .batter-grid {
@@ -311,14 +328,57 @@ div[data-testid="stCheckbox"] label {
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("<div class='main-title'>🥎 Dugout Live</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='subtitle'>{data['team_name']} game board</div>", unsafe_allow_html=True)
+
+with st.expander("Game Setup"):
+    setup_col1, setup_col2 = st.columns(2)
+
+    with setup_col1:
+        new_team_name = st.text_input("Team Name", value=data["team_name"])
+        new_female_text = st.text_area(
+            "Female Lineup",
+            value=lineup_to_text(data["female_lineup"]),
+            height=180
+        )
+
+    with setup_col2:
+        new_opponent = st.text_input("Opponent", value=data["opponent"])
+        new_male_text = st.text_area(
+            "Male Lineup",
+            value=lineup_to_text(data["male_lineup"]),
+            height=180
+        )
+
+    if st.button("Save Setup", use_container_width=True):
+        new_female_lineup = clean_lineup(new_female_text)
+        new_male_lineup = clean_lineup(new_male_text)
+
+        if not new_female_lineup or not new_male_lineup:
+            st.warning("Please add at least one female player and one male player.")
+        else:
+            data["team_name"] = new_team_name.strip() or "Your Team"
+            data["opponent"] = new_opponent.strip() or "Opponent"
+            data["female_lineup"] = new_female_lineup
+            data["male_lineup"] = new_male_lineup
+            data["home_score"] = 0
+            data["away_score"] = 0
+            data["inning"] = 1
+            data["half"] = "Top"
+            data["outs"] = 0
+            data["current_female_index"] = 0
+            data["current_male_index"] = 0
+            data["next_gender"] = "Female"
+
+            save_data(data)
+            st.success("Setup saved. Game reset with new lineup.")
+            rerun_app()
+
 current_batter, on_deck, in_the_hole = get_batters(data)
 
 current_batter_display = first_name(current_batter)
 on_deck_display = first_name(on_deck)
 in_the_hole_display = first_name(in_the_hole)
-
-st.markdown("<div class='main-title'>🥎 Dugout Live</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='subtitle'>{data['team_name']} game board</div>", unsafe_allow_html=True)
 
 batting_html = f"""
 <div class='batter-grid'>
