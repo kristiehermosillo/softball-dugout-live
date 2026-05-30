@@ -80,8 +80,10 @@ def previous_batter(data):
 
 def add_out(data):
     data["outs"] += 1
+
     if data["outs"] >= 3:
         data["outs"] = 0
+
         if data["half"] == "Top":
             data["half"] = "Bottom"
         else:
@@ -107,18 +109,18 @@ header {
 }
 
 .block-container {
-    padding-top: 2.4rem;
+    padding-top: 2.6rem;
     padding-left: 2rem;
     padding-right: 2rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 1rem;
     max-width: 1350px;
 }
 
 .main-title {
-    font-size: clamp(34px, 4.2vw, 58px);
+    font-size: clamp(34px, 4.1vw, 56px);
     font-weight: 900;
     color: white;
-    line-height: 1.05;
+    line-height: 1.08;
     margin-bottom: 4px;
 }
 
@@ -132,7 +134,7 @@ header {
     display: grid;
     grid-template-columns: 1.4fr 1fr 1fr;
     gap: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
 }
 
 .batter-card {
@@ -144,14 +146,17 @@ header {
 
 .now-card {
     border: 2px solid #84cc16;
+    box-shadow: 0 0 18px rgba(132, 204, 22, 0.22);
 }
 
 .deck-card {
     border: 2px solid #38bdf8;
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.18);
 }
 
 .hole-card {
     border: 2px solid #c084fc;
+    box-shadow: 0 0 18px rgba(192, 132, 252, 0.18);
 }
 
 .card-label {
@@ -181,6 +186,7 @@ header {
     display: grid;
     grid-template-columns: 1fr 1fr 1.25fr;
     gap: 14px;
+    margin-top: 14px;
     margin-bottom: 8px;
 }
 
@@ -220,6 +226,11 @@ header {
     font-size: 14px;
 }
 
+div[data-testid="stCheckbox"] label {
+    color: #fecaca !important;
+    font-weight: 900;
+}
+
 .lineup-title {
     color: white;
     font-size: 24px;
@@ -250,9 +261,16 @@ header {
     margin: 3px 0;
 }
 
+.reset-note {
+    color: #fecaca;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+}
+
 @media screen and (max-width: 900px) {
     .block-container {
-        padding-top: 2.2rem;
+        padding-top: 2.4rem;
         padding-left: 1rem;
         padding-right: 1rem;
     }
@@ -295,6 +313,23 @@ batting_html = f"""
 """
 st.markdown(batting_html, unsafe_allow_html=True)
 
+bat_button_col1, bat_button_col2, bat_button_col3 = st.columns([1.4, 1, 1])
+
+with bat_button_col1:
+    if st.button("Previous Batter", use_container_width=True):
+        previous_batter(data)
+        save_data(data)
+        rerun_app()
+
+with bat_button_col2:
+    if st.button("Next Batter", use_container_width=True):
+        next_batter(data)
+        save_data(data)
+        rerun_app()
+
+with bat_button_col3:
+    st.empty()
+
 score_html = f"""
 <div class='score-grid'>
 <div class='score-card'>
@@ -334,25 +369,6 @@ with score_button_col3:
         save_data(data)
         rerun_app()
 
-nav_button_col1, nav_button_col2, nav_button_col3 = st.columns([1, 1, 1.25])
-
-with nav_button_col1:
-    if st.button("Previous Batter", use_container_width=True):
-        previous_batter(data)
-        save_data(data)
-        rerun_app()
-
-with nav_button_col2:
-    if st.button("Next Batter", use_container_width=True):
-        next_batter(data)
-        save_data(data)
-        rerun_app()
-
-with nav_button_col3:
-    if st.button("Reset Game", use_container_width=True):
-        save_data(default_data)
-        rerun_app()
-
 st.markdown("<div class='lineup-title'>Lineup</div>", unsafe_allow_html=True)
 
 lineup_col1, lineup_col2 = st.columns(2)
@@ -372,3 +388,17 @@ with lineup_col2:
             st.markdown(f"<div class='highlight'>🥎 {i + 1}. {player}</div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='lineup-text'>{i + 1}. {player}</div>", unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+reset_left, reset_right = st.columns([4, 1])
+
+with reset_right:
+    st.markdown("<div class='reset-note'>Reset area</div>", unsafe_allow_html=True)
+    confirm_reset = st.checkbox("Confirm")
+    if st.button("Reset Game", use_container_width=True):
+        if confirm_reset:
+            save_data(default_data)
+            rerun_app()
+        else:
+            st.warning("Check Confirm first.")
