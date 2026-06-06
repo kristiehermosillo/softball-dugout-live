@@ -143,13 +143,13 @@ header {{
     font-weight: 900;
     color: white;
     line-height: 1;
-    margin-bottom: 6px;
+    margin-bottom: 0px;
 }}
 
 .subtitle {{
     color: #EAF4FF;
     font-size: 18px;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
 }}
 
 .batter-grid {{
