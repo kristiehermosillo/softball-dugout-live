@@ -131,7 +131,7 @@ header {{
 }}
 
 .block-container {{
-    padding-top: 1.2rem;
+    padding-top: 4.5rem;
     padding-left: 2.3rem;
     padding-right: 2.3rem;
     padding-bottom: 1rem;
