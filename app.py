@@ -17,7 +17,7 @@ default_data = {
     "current_female_index": 0,
     "current_male_index": 0,
     "next_gender": "Female",
-    "theme": "Dodger"
+    "theme": "Night Game"
 }
 
 def load_data():
@@ -107,7 +107,7 @@ themes = {
         "now": "#FFFFFF",
         "deck": "#EF3E42",
         "hole": "#A7C7E7",
-        "card": "rgba(255,255,255,0.13)"
+        "card": "rgba(255,255,255,0.12)"
     },
     "Night Game": {
         "bg": "linear-gradient(135deg, #08111f 0%, #111827 50%, #020617 100%)",
@@ -118,7 +118,7 @@ themes = {
     }
 }
 
-theme = themes.get(data.get("theme", "Dodger"), themes["Dodger"])
+theme = themes.get(data.get("theme", "Night Game"), themes["Night Game"])
 
 st.markdown(f"""
 <style>
@@ -131,39 +131,39 @@ header {{
 }}
 
 .block-container {{
-    padding-top: 4.5rem;
-    padding-left: 2.3rem;
-    padding-right: 2.3rem;
-    padding-bottom: 1rem;
+    padding-top: 3.9rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 0.5rem;
     max-width: 1450px;
 }}
 
 .main-title {{
-    font-size: clamp(38px, 4.4vw, 64px);
+    font-size: clamp(34px, 4vw, 56px);
     font-weight: 900;
     color: white;
     line-height: 1;
-    margin-bottom: 0px;
+    margin-bottom: 4px;
 }}
 
 .subtitle {{
     color: #EAF4FF;
-    font-size: 18px;
-    margin-bottom: 24px;
+    font-size: 16px;
+    margin-bottom: 16px;
 }}
 
 .batter-grid {{
     display: grid;
-    grid-template-columns: 1.45fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 8px;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 6px;
 }}
 
 .batter-card {{
     background: {theme["card"]};
-    border-radius: 22px;
-    padding: 22px;
-    min-height: 185px;
+    border-radius: 20px;
+    padding: 20px;
+    min-height: 150px;
 }}
 
 .now-card {{
@@ -181,22 +181,22 @@ header {{
 .card-label {{
     color: #EAF4FF;
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 3px;
     font-weight: 900;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }}
 
 .now-name {{
     color: white;
-    font-size: clamp(64px, 7vw, 104px);
+    font-size: clamp(56px, 6vw, 88px);
     font-weight: 900;
     line-height: 0.95;
 }}
 
 .secondary-name {{
     color: white;
-    font-size: clamp(46px, 5vw, 74px);
+    font-size: clamp(42px, 4.5vw, 68px);
     font-weight: 900;
     line-height: 0.98;
 }}
@@ -204,30 +204,30 @@ header {{
 .score-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr 1.15fr;
-    gap: 16px;
-    margin-top: 18px;
-    margin-bottom: 8px;
+    gap: 14px;
+    margin-top: 14px;
+    margin-bottom: 6px;
 }}
 
 .score-card {{
     background: {theme["card"]};
-    border: 2px solid rgba(255,255,255,0.30);
-    border-radius: 20px;
-    padding: 18px;
-    min-height: 120px;
+    border: 2px solid rgba(255,255,255,0.28);
+    border-radius: 18px;
+    padding: 15px;
+    min-height: 95px;
 }}
 
 .score-name {{
     color: #EAF4FF;
     text-transform: uppercase;
     letter-spacing: 2px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
 }}
 
 .score-number {{
     color: white;
-    font-size: 58px;
+    font-size: 44px;
     font-weight: 900;
     line-height: 1;
     margin-top: 8px;
@@ -235,53 +235,56 @@ header {{
 
 .game-info {{
     color: white;
-    font-size: 44px;
+    font-size: 38px;
     font-weight: 900;
-    line-height: 1.08;
+    line-height: 1.05;
 }}
 
 .stButton > button {{
     border-radius: 12px;
-    height: 44px;
+    height: 38px;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 13px;
 }}
 
 div[data-testid="stButton"] button[kind="primary"] {{
-    height: 66px !important;
-    font-size: 24px !important;
-    border-radius: 16px !important;
+    height: 56px !important;
+    font-size: 20px !important;
+    border-radius: 14px !important;
     font-weight: 900 !important;
 }}
 
 .lineup-title {{
     color: white;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 900;
-    margin-top: 14px;
+    margin-top: 8px;
+    margin-bottom: 4px;
 }}
 
 .lineup-subtitle {{
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 900;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }}
 
 .lineup-text {{
     color: #EAF4FF;
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.22;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    padding: 1px 0;
 }}
 
 .highlight {{
     background: rgba(239,62,66,0.32);
-    border-radius: 12px;
-    padding: 6px 10px;
+    border-radius: 10px;
+    padding: 4px 8px;
     color: white;
     font-weight: 900;
-    font-size: 16px;
-    margin: 3px 0;
+    font-size: 14px;
+    margin: 2px 0;
 }}
 
 .setup-note {{
@@ -301,8 +304,14 @@ div[data-testid="stCheckbox"] label {{
     font-weight: 900;
 }}
 
+hr {{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}}
+
 @media screen and (max-width: 900px) {{
     .block-container {{
+        padding-top: 4rem;
         padding-left: 1rem;
         padding-right: 1rem;
     }}
@@ -313,10 +322,6 @@ div[data-testid="stCheckbox"] label {{
 
     .score-grid {{
         grid-template-columns: 1fr;
-    }}
-
-    .batter-card {{
-        min-height: 120px;
     }}
 }}
 </style>
@@ -352,7 +357,7 @@ batting_html = f"""
 """
 st.markdown(batting_html, unsafe_allow_html=True)
 
-bat_next_col, bat_middle_col, bat_prev_col = st.columns([1.45, 1, 1])
+bat_next_col, bat_middle_col, bat_prev_col = st.columns([1.35, 1, 1])
 
 with bat_next_col:
     if st.button("NEXT BATTER", type="primary", use_container_width=True):
@@ -403,11 +408,13 @@ with score_col2:
 
 with score_col3:
     out_col1, out_col2 = st.columns(2)
+
     with out_col1:
         if st.button("Out", use_container_width=True):
             add_out(data)
             save_data(data)
             rerun_app()
+
     with out_col2:
         if st.button("Undo Out", use_container_width=True):
             undo_out(data)
@@ -437,8 +444,6 @@ with lineup_col2:
 st.markdown("---")
 
 with st.expander("⚙️ Game Setup / Edit Players"):
-    st.markdown("<div class='setup-note'>Use Quick Paste if you already have a lineup. Use Guided Entry if you want to type one player at a time.</div>", unsafe_allow_html=True)
-
     setup_tab1, setup_tab2 = st.tabs(["Quick Paste", "Guided Entry"])
 
     with setup_tab1:
@@ -449,7 +454,7 @@ with st.expander("⚙️ Game Setup / Edit Players"):
             new_female_text = st.text_area(
                 "Female Lineup — one player per line",
                 value=lineup_to_text(data["female_lineup"]),
-                height=170,
+                height=150,
                 key="quick_female"
             )
 
@@ -458,14 +463,14 @@ with st.expander("⚙️ Game Setup / Edit Players"):
             new_male_text = st.text_area(
                 "Male Lineup — one player per line",
                 value=lineup_to_text(data["male_lineup"]),
-                height=170,
+                height=150,
                 key="quick_male"
             )
 
         theme_choice = st.selectbox(
             "Theme",
             list(themes.keys()),
-            index=list(themes.keys()).index(data.get("theme", "Dodger")),
+            index=list(themes.keys()).index(data.get("theme", "Night Game")),
             key="quick_theme"
         )
 
@@ -516,7 +521,7 @@ with st.expander("⚙️ Game Setup / Edit Players"):
         guided_theme = st.selectbox(
             "Theme",
             list(themes.keys()),
-            index=list(themes.keys()).index(data.get("theme", "Dodger")),
+            index=list(themes.keys()).index(data.get("theme", "Night Game")),
             key="guided_theme"
         )
 
