@@ -329,7 +329,10 @@ on_deck_display = first_name(on_deck)
 in_the_hole_display = first_name(in_the_hole)
 
 st.markdown("<div class='main-title'>🥎 Dugout Live</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='subtitle'>{data['team_name']} game board</div>", unsafe_allow_html=True)
+st.markdown(
+    f"<div class='subtitle'>{data['team_name']} vs {data['opponent']}</div>",
+    unsafe_allow_html=True
+)
 
 batting_html = f"""
 <div class='batter-grid'>
