@@ -208,16 +208,38 @@ score_html = f"""
 """
 st.markdown(score_html, unsafe_allow_html=True)
 
-score_buttons_col1, score_buttons_col2, score_buttons_col3 = st.columns([1,1,1.25])
-with score_buttons_col1:
+score_button_col1, score_button_col2, score_button_col3 = st.columns([1, 1, 1.25])
+
+with score_button_col1:
     if st.button("+ Run Us", use_container_width=True):
-        data["home_score"]+=1; save_data(data); rerun_app()
-with score_buttons_col2:
+        data["home_score"] += 1
+        save_data(data)
+        rerun_app()
+
+with score_button_col2:
     if st.button("+ Run Opp", use_container_width=True):
-        data["away_score"]+=1; save_data(data); rerun_app()
-with score_buttons_col3:
-    if st.button("+ Out", use_container_width=True):
-        add_out(data); save_data(data); rerun_app()
+        data["away_score"] += 1
+        save_data(data)
+        rerun_app()
+
+with score_button_col3:
+
+    out_col1, out_col2 = st.columns(2)
+
+    with out_col1:
+    if st.button("Out", use_container_width=True):
+        add_out(data)
+        save_data(data)
+        rerun_app()
+
+    with out_col2:
+    if st.button("Undo Out", use_container_width=True):
+
+        if data["outs"] > 0:
+            data["outs"] -= 1
+
+        save_data(data)
+        rerun_app()
 
 # Lineup display
 st.markdown("<div class='lineup-title'>Lineup</div>", unsafe_allow_html=True)
