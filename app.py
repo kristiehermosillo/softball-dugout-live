@@ -227,19 +227,19 @@ with score_button_col3:
     out_col1, out_col2 = st.columns(2)
 
     with out_col1:
-    if st.button("Out", use_container_width=True):
-        add_out(data)
-        save_data(data)
-        rerun_app()
+        if st.button("Out", use_container_width=True):
+            add_out(data)
+            save_data(data)
+            rerun_app()
 
     with out_col2:
-    if st.button("Undo Out", use_container_width=True):
+        if st.button("Undo Out", use_container_width=True):
 
-        if data["outs"] > 0:
-            data["outs"] -= 1
+            if data["outs"] > 0:
+                data["outs"] -= 1
 
-        save_data(data)
-        rerun_app()
+            save_data(data)
+            rerun_app()
 
 # Lineup display
 st.markdown("<div class='lineup-title'>Lineup</div>", unsafe_allow_html=True)
